@@ -133,7 +133,7 @@ export default function GRFForm() {
           </div>
           {/* ───────── Form buttons ───────── */}
           <div className="mt-10 flex justify-end gap-2">
-            <button className="rounded px-6 border border-[#0488a6] py-2 text-sm font-medium text-[#0488a6] hover:bg-[#0488a6]/10 cursor-pointer">
+            <button type="button" className="rounded px-6 border border-[#0488a6] py-2 text-sm font-medium text-[#0488a6] hover:bg-[#0488a6]/10 cursor-pointer">
               Cancel
             </button>
 

@@ -1,13 +1,12 @@
-import {
-  FiFilePlus,
-  FiClipboard,
-  FiLayers,
-  FiSettings,
-} from "react-icons/fi";
+import { FiFilePlus, FiClipboard, FiLayers, FiSettings } from "react-icons/fi";
 
 export const quickActions = [
   { label: "Create New GRF", icon: FiFilePlus, href: "/dashboard/new-grf" },
-  { label: "View Submitted GRFs", icon: FiClipboard, href: "#" },
+  {
+    label: "View Submitted GRFs",
+    icon: FiClipboard,
+    href: "/dashboard/grf-view",
+  },
 ];
 
 export const featureCards = [

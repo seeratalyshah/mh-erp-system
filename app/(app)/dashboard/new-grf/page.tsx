@@ -1,10 +1,8 @@
-import GRFForm from '@/FormModals/grf-form'
-import React from 'react'
+import GRFForm from "@/sections/dashboard/grf-form";
+import React from "react";
 
 const NewGRF = () => {
-  return (
-    <GRFForm />
-  )
-}
+  return <GRFForm />;
+};
 
-export default NewGRF
+export default NewGRF;
