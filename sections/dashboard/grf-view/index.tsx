@@ -1,83 +1,79 @@
 // GrfViewSection/index.tsx
 "use client";
 
-import { flexRender } from "@tanstack/react-table";
+import { Table, Form, Select, DatePicker, Space, Row, Col } from "antd";
 import { useViewGrf } from "./use-view-grf";
-import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
-import { ACTIVITY_FILTERS } from "./data";
-import { CustomFilters } from "@/components/common/filters";
+import { statusOpts, typeOpts } from "./data";
+import GoBack from "@/components/common/go-back";
 
 export default function GrfViewSection() {
-  const { table, updateParams } = useViewGrf();
+  const { data, params, updateParams, columns } = useViewGrf();
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
-      {/* Filters */}
-      <div className="pt-2.5 pb-5">
-        <h3 className="text-md font-medium mb-2">Search by Filters</h3>
-        <CustomFilters
-          tableHeaderData={ACTIVITY_FILTERS}
-          onChanged={updateParams}
-        />
-      </div>
+    <div className="mx-auto max-w-7xl">
+      <Row gutter={[0, 24]}>
+        <Col>
+          <GoBack link="/dashboard" />
+        </Col>
+        <Col span={24}>
+          <h1 className="text-xl font-semibold pb-2 border-b border-gray-200">
+            Submitted GRF List
+          </h1>
+        </Col>
+        <Col span={24}>
+          <Form layout="vertical">
+            <Row gutter={[16, 16]} wrap>
+              <Col xs={24} sm={12} md={8} lg={6}>
+                <Form.Item label="Filter by Status">
+                  <Select
+                    allowClear
+                    placeholder="Select GRF Status"
+                    options={statusOpts}
+                    value={params["grf-status"] || undefined}
+                    onChange={(v) => updateParams({ "grf-status": v || "" })}
+                    style={{ width: "100%" }} // stretches inside its Col
+                  />
+                </Form.Item>
+              </Col>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded border border-gray-200 shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gray-50">
-            {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id}>
-                {hg.headers.map((h) => (
-                  <th
-                    key={h.id}
-                    className="px-3 py-2 text-left font-medium text-gray-700"
-                  >
-                    {
-                      h.isPlaceholder
-                        ? null
-                        : flexRender(
-                            h.column.columnDef.header,
-                            h.getContext()
-                          ) /* 👈 FIX */
+              <Col xs={24} sm={12} md={8} lg={6}>
+                <Form.Item label="Filter by Type">
+                  <Select
+                    allowClear
+                    placeholder="Select GRF Type"
+                    options={typeOpts}
+                    value={params["grf-type"] || undefined}
+                    onChange={(v) =>
+                      updateParams({ "grf-type": (v ?? "") as any })
                     }
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
 
-          <tbody className="divide-y divide-gray-100 bg-white">
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50">
-                {row.getVisibleCells().map((cell) =>
-                  cell.column.id === "actions" ? (
-                    <td key={cell.id} className="px-3 py-2">
-                      <div className="flex gap-3">
-                        <button title="View">
-                          <FiEye className="text-blue-600" />
-                        </button>
-                        <button title="Edit">
-                          <FiEdit className="text-green-600" />
-                        </button>
-                        <button title="Delete">
-                          <FiTrash2 className="text-red-600" />
-                        </button>
-                      </div>
-                    </td>
-                  ) : (
-                    <td key={cell.id} className="px-3 py-2">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  )
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              <Col xs={24} sm={12} md={8} lg={6}>
+                <Form.Item label="Filter by Date">
+                  <DatePicker
+                    value={params["grf-date"]}
+                    onChange={(d) => updateParams({ "grf-date": d ?? null })}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Col>
+        <Col span={24}>
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={data}
+            pagination={{ pageSize: 8 }}
+            scroll={{ x: true }}
+            bordered
+          />
+        </Col>
+      </Row>
     </div>
   );
 }

@@ -1,8 +1,14 @@
+// Header.tsx – revamped look with Ant Design components
 "use client";
 
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
-import { FiLogOut } from "react-icons/fi";
+import { Dropdown, MenuProps, Avatar, Typography, Button } from "antd";
+import {
+  FiLogOut,
+  FiUser,
+  FiChevronDown,
+} from "react-icons/fi";
 
 export default function Header() {
   const router = useRouter();
@@ -13,27 +19,47 @@ export default function Header() {
     router.replace("/sign-in");
   };
 
+  /* dropdown menu for user actions */
+  const items: MenuProps["items"] = [
+    {
+      key: "profile",
+      icon: <FiUser />,
+      label: "Profile",
+      disabled: true, // not implemented yet
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "logout",
+      icon: <FiLogOut />,
+      label: "Logout",
+      onClick: handleLogout,
+    },
+  ];
+
   return (
-    <nav
-      /* 👇 expose the height for the sidebar’s calc(100vh - var(--header-height)) */
-      style={{ "--header-height": "56px" } as React.CSSProperties}
-      className="flex h-14 items-center justify-between bg-[#0488a6] px-4"
-    >
-      <h1 className="text-xl font-semibold text-white">MH ERP SYSTEM</h1>
+    <header className="flex h-14 w-full items-center justify-between bg-primary px-6 shadow-md">
+      {/* ── Brand ───────────────────────────────────────────── */}
+      <Typography.Title
+        level={4}
+        className="!m-0 !text-white tracking-wide select-none"
+      >
+        MH ERP SYSTEM
+      </Typography.Title>
 
-      <div className="flex items-center gap-4 text-white">
-        <span className="text-sm">
-          {user?.email ?? "Guest"}
-        </span>
-
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-1 rounded bg-white/30 px-3 py-1 text-sm font-medium hover:bg-white/50 cursor-pointer"
-        >
-          <FiLogOut size={14} />
-          Logout
-        </button>
-      </div>
-    </nav>
+      {/* ── User section ───────────────────────────────────── */}
+      <Dropdown menu={{ items }} trigger={["click"]}>
+        <Button className="flex items-center gap-2">
+          {/* <Avatar size={28} className="bg-white/90 backdrop-blur-sm">
+            {user?.email?.charAt(0).toUpperCase() ?? "G"}
+          </Avatar> */}
+          <span className="hidden sm:inline text-sm">
+            {user?.email ?? "Guest"}
+          </span>
+          <FiChevronDown className="hidden sm:inline-block" />
+        </Button>
+      </Dropdown>
+    </header>
   );
 }

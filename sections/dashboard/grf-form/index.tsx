@@ -1,151 +1,169 @@
 "use client";
 
-import { FormProvider } from "@/components/form/rhf-provider";
-import { RHFInputField } from "@/components/form/rhf-input";
-import { RHFSelect } from "@/components/form/rhf-multi-select";
-import { RHFTextArea } from "@/components/form/rhf-text-area";
-import { RHFRadioGroup } from "@/components/form/rhf-grouped-radio";
-import { RHFFileUpload } from "@/components/form/custom-file-upload";
-import { CgCloseR } from "react-icons/cg";
-import { MdAddBox } from "react-icons/md";
-import { useGRFForm } from "./use-grf-form";
+import {
+  Form,
+  Input,
+  Select,
+  Radio,
+  Button,
+  Upload,
+  Space,
+  Divider,
+  Row,
+  Col,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { useGRFForm, defaultValues } from "./use-grf-form";
+import GoBack from "@/components/common/go-back";
 
 export default function GRFForm() {
-  const { handleSubmit, onSubmit, methods, fields, append, remove } =
-    useGRFForm();
+  const { form, onFinish } = useGRFForm();
 
   return (
-    <div className="h-full max-w-6xl lg:max-w-5xl mx-auto">
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <div className="p-8 border border-gray-200 rounded-lg shadow-sm">
-          <h1 className="mb-6 text-xl font-semibold">New Goods Request Form</h1>
-          <div className="flex flex-col gap-4">
-            <div>
-              <RHFRadioGroup
-                name="typeOfRequest"
-                outerLabel="Type Of Request"
-                required
-                options={[
-                  { label: "Goods", value: "goods" },
-                  { label: "Services", value: "services" },
-                ]}
-              />
-            </div>
-            <div>
-              <RHFSelect
-                outerLabel="Category"
-                name="category"
-                options={[
-                  { value: "1", label: "Category 1" },
-                  { value: "2", label: "Category 2" },
-                ]}
-                required
-              />
-            </div>
-            <div>
-              <RHFTextArea
-                outerLabel="Description"
-                name="description"
-                placeholder="Description"
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <RHFSelect
-                  outerLabel="Unit Of Measurement"
-                  name="unit"
-                  options={[
-                    { value: "1", label: "Unit 1" },
-                    { value: "2", label: "Unit 2" },
-                  ]}
-                  required
-                />
-              </div>
-              <div>
-                <RHFInputField
-                  outerLabel="Quantity Required"
-                  name="quantity"
-                  placeholder="Enter quantity"
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <RHFTextArea
-                outerLabel="Justification"
-                name="justification"
-                placeholder="Justification"
-              />
-            </div>
-            <div>
-              <RHFSelect
-                outerLabel="Budget Head"
-                name="budgetHead"
-                options={[
-                  { value: "1", label: "Budget Head 1" },
-                  { value: "2", label: "Budget Head 2" },
-                ]}
-                required
-              />
-            </div>
-            {/* ───────── Attachments ───────── */}
-            <div>
-              <div className="mb-4 flex items-center">
-                <h3 className="mr-2 whitespace-nowrap font-medium">
-                  Attachments{" "}
-                  <span className="text-sm text-gray-400">(Optional)</span>
-                </h3>
-                <div className="flex-1 border-t border-gray-300" />
-              </div>
-
-              {fields.map((field, idx) => (
-                <div
-                  key={field.id}
-                  className="mb-2 flex items-center justify-between gap-4 rounded border border-gray-200 bg-white p-3"
-                >
-                  <RHFFileUpload
-                    name={`attachments.${idx}.fileUpload`}
-                    accept="image/*,.pdf,.xlsx,.xls,.doc,.docx"
-                  />
-
-                  <button type="button" onClick={() => remove(idx)}>
-                    <CgCloseR
-                      size={24}
-                      className="rounded bg-red-500 text-white hover:bg-red-700"
-                    />
-                  </button>
-                </div>
-              ))}
-
-              <button
-                type="button"
-                onClick={() =>
-                  append({
-                    fileUpload: "",
-                  })
-                }
-                className="mt-3 flex items-center gap-2 cursor-pointer rounded bg-[#0488a6] px-3.5 py-3 text-sm text-white transition-colors hover:bg-[#0488a6]/80 disabled:bg-blue-300"
-              >
-                <MdAddBox size={20} />
-                Add Single or Multiple Files
-              </button>
-            </div>
-          </div>
-          {/* ───────── Form buttons ───────── */}
-          <div className="mt-10 flex justify-end gap-2">
-            <button type="button" className="rounded px-6 border border-[#0488a6] py-2 text-sm font-medium text-[#0488a6] hover:bg-[#0488a6]/10 cursor-pointer">
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              className="flex items-center gap-4 rounded bg-[#0488a6] cursor-pointer px-4 py-2 text-sm font-medium text-white hover:bg-[#0488a6]/80"
+    <div className="mx-auto max-w-7xl">
+      <Row gutter={[0, 24]}>
+        <Col>
+          <GoBack link="/dashboard" />
+        </Col>
+        <Col span={24}>
+          <h1 className="text-xl font-semibold pb-2 border-b border-gray-200">
+            New Goods Request Form
+          </h1>
+        </Col>
+        <Col span={24}>
+          <div className="rounded-lg border border-gray-200 p-10 shadow-sm bg-white">
+            <Form
+              layout="vertical"
+              form={form}
+              initialValues={defaultValues}
+              onFinish={onFinish}
+              scrollToFirstError
             >
-              Submit GRF
-            </button>
+              {/* ── Type of Request ───────────────────────────── */}
+              <Form.Item
+                label="Type of Request"
+                name="typeOfRequest"
+                rules={[{ required: true, message: "Please select a type" }]}
+              >
+                <Radio.Group
+                  options={[
+                    { label: "Goods", value: "goods" },
+                    { label: "Services", value: "services" },
+                  ]}
+                />
+              </Form.Item>
+
+              {/* ── Category ─────────────────────────────────── */}
+              <Form.Item
+                label="Category"
+                name="category"
+                rules={[
+                  { required: true, message: "Please choose a category" },
+                ]}
+              >
+                <Select
+                  placeholder="Select category"
+                  options={[
+                    { value: "1", label: "Category 1" },
+                    { value: "2", label: "Category 2" },
+                  ]}
+                />
+              </Form.Item>
+
+              {/* ── Description ──────────────────────────────── */}
+              <Form.Item label="Description" name="description">
+                <Input.TextArea rows={3} placeholder="Description" />
+              </Form.Item>
+
+              {/* ── Unit & Quantity side-by-side ─────────────── */}
+              <Space
+                direction="horizontal"
+                size="large"
+                className="block md:flex"
+              >
+                <Form.Item
+                  label="Unit of Measurement"
+                  name="unit"
+                  className="flex-1"
+                  rules={[{ required: true, message: "Select a unit" }]}
+                >
+                  <Select
+                    placeholder="Select unit"
+                    options={[
+                      { value: "1", label: "Unit 1" },
+                      { value: "2", label: "Unit 2" },
+                    ]}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  label="Quantity Required"
+                  name="quantity"
+                  className="flex-1"
+                  rules={[{ required: true, message: "Enter quantity" }]}
+                >
+                  <Input placeholder="Enter quantity" type="number" min={1} />
+                </Form.Item>
+              </Space>
+
+              {/* ── Justification ────────────────────────────── */}
+              <Form.Item label="Justification" name="justification">
+                <Input.TextArea rows={3} placeholder="Justification" />
+              </Form.Item>
+
+              {/* ── Budget Head ──────────────────────────────── */}
+              <Form.Item
+                label="Budget Head"
+                name="budgetHead"
+                rules={[{ required: true, message: "Choose a budget head" }]}
+              >
+                <Select
+                  placeholder="Select budget head"
+                  options={[
+                    { value: "1", label: "Budget Head 1" },
+                    { value: "2", label: "Budget Head 2" },
+                  ]}
+                />
+              </Form.Item>
+
+              {/* ── Attachments ──────────────────────────────── */}
+              <Divider orientation="left" plain>
+                Attachments <span className="text-gray-400">(Optional)</span>
+              </Divider>
+
+              <Form.Item
+                name="attachments"
+                label=""
+                valuePropName="fileList" /* store whole list in the form */
+                getValueFromEvent={(e /* AntD → form value converter   */) =>
+                  Array.isArray(e) ? e : e && e.fileList
+                }
+                /* rules={[]}   add validation here if you ever want it required */
+              >
+                <Upload
+                  multiple /* allow many in one go   */
+                  accept="image/*,.pdf,.xlsx,.xls,.doc,.docx" /* your MIME whitelist    */
+                  listType="text"
+                  beforeUpload={() => false} /* prevent auto-upload    */
+                >
+                  <Button icon={<UploadOutlined />}>
+                    Add Single or Multiple Files
+                  </Button>
+                </Upload>
+              </Form.Item>
+
+              {/* ── Action Buttons ───────────────────────────── */}
+              <div className="mt-6 flex justify-end gap-2">
+                <Button htmlType="button">Cancel</Button>
+
+                <Button type="primary" htmlType="submit">
+                  Submit GRF
+                </Button>
+              </div>
+            </Form>
           </div>
-        </div>
-      </FormProvider>
+        </Col>
+      </Row>
     </div>
   );
 }

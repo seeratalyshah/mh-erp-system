@@ -14,21 +14,25 @@ export const featureCards = [
     title: "Procurement Forms",
     description: "Access GRF, PO, QRF, and inspection reports",
     icon: FiLayers,
+     href: "/dashboard/procurement-forms", 
   },
   {
     title: "Vendor List",
     description: "Browse and manage approved vendors",
     icon: FiClipboard,
+    href: "/dashboard/vendor-management",           
   },
   {
     title: "Reports",
     description: "Generate and view procurement analytics",
     icon: FiFilePlus,
+    href: "/dashboard/reports", 
   },
   {
     title: "Settings",
     description: "Manage your account preferences",
     icon: FiSettings,
+    href: "/dashboard/settings", 
   },
 ];
 

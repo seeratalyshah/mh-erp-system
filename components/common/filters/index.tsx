@@ -231,7 +231,7 @@ export function CustomFilters({
                   useRange={useRange}
                   primaryColor="blue"
                   onChange={(v) => updateParam(name, v)}
-                  inputClassName="mt-1 w-full rounded border border-gray-300 py-2.5 pl-3 text-sm focus:border-[#0488a6] focus:outline-none placeholder:text-[14px]"
+                  inputClassName="w-full rounded border border-gray-300 py-2.5 pl-3 text-sm focus:border-[#0488a6] focus:outline-none placeholder:text-[14px]"
                 />
               </div>
             );

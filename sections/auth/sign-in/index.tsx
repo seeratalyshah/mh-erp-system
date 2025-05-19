@@ -1,99 +1,104 @@
+// SignInSection.tsx – Ant Design version
 "use client";
 
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { buttonVariants, containerVariants, itemVariants } from "@/utils/sign-functions";
+import { containerVariants, itemVariants } from "@/utils/sign-functions";
 import { useSignIn } from "./use-signin";
-import { FormProvider } from "@/components/form/rhf-provider";
-import { RHFInputField } from "@/components/form/rhf-input";
+import { Form, Input, Button, Typography, Space } from "antd";
 
 export default function SignInSection() {
-  const { handleSubmit, onSubmit, methods, isHovered, setIsHovered, login } =
-    useSignIn();
+  const { login, isHovered, setIsHovered } = useSignIn();
+  const [form] = Form.useForm();
+
+  /** antd `onFinish` gives validated values */
+  const handleFinish = (values: { email: string; password: string }) => {
+    login.mutate(values);
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full max-w-sm border border-gray-200 p-10 rounded-lg"
+      className="w-full max-w-sm border border-gray-200 p-10 rounded-lg bg-white"
     >
       {/* logo */}
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-primary-400"
+        className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-primary-400 text-white"
       >
-        <p>Logo</p>
+        <Typography.Title level={4} className="!m-0">Logo</Typography.Title>
       </motion.div>
 
       {/* heading */}
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-primary-400 dark:text-gray-200">
+        <Typography.Title level={3} className="!m-0 text-primary-400">
           Welcome Back
-        </h1>
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-300">
+        </Typography.Title>
+        <Typography.Text type="secondary">
           Enter your credentials to sign in
-        </p>
+        </Typography.Text>
       </div>
 
-      {/* form */}
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      {/* Ant Design form */}
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleFinish}
+        autoComplete="off"
+        requiredMark={false}
+      >
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="space-y-6"
+          className="space-y-4"
         >
           <motion.div variants={itemVariants}>
-            <RHFInputField
-              outerLabel="Email"
-              placeholder="you@example.com"
+            <Form.Item
+              label="Email"
               name="email"
-              type="email"
-              required
-            />
+              rules={[{ required: true, message: "Please enter your email" }, { type: "email", message: "Not a valid email" }]}
+            >
+              <Input placeholder="you@example.com" size="large" />
+            </Form.Item>
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <RHFInputField
-              outerLabel="Password"
-              placeholder="••••••••"
+            <Form.Item
+              label="Password"
               name="password"
-              type="password"
-              required
-            />
+              rules={[{ required: true, message: "Please enter your password" }]}
+            >
+              <Input.Password placeholder="••••••••" size="large" />
+            </Form.Item>
           </motion.div>
 
-          <div className="flex justify-end text-sm">
-            <Link
-              href="#"
-              className="text-primary-400 hover:text-primary-500 dark:text-gray-300"
-            >
-              Forgot password?
+          <div className="flex justify-end text-sm mb-4">
+            <Link href="#">
+              <span className="text-primary hover:text-primary/70">Forgot password?</span>
             </Link>
           </div>
 
           <motion.div variants={itemVariants}>
-            <motion.button
-              type="submit"
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
-              disabled={login.isPending}
-              onHoverStart={() => setIsHovered(true)}
-              onHoverEnd={() => setIsHovered(false)}
-              className={`flex w-full items-center justify-center gap-2 rounded-lg bg-[#0488a6] py-3.5 text-base font-medium text-white transition-opacity ${
-                login.isPending && "cursor-not-allowed opacity-70"
-              }`}
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              block
+              loading={login.isPending}
+              className="flex items-center justify-center gap-2"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
             >
               {login.isPending ? (
-                <>
-                  <span>Signing in</span>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                </>
+                <Space>
+                  Signing in <Loader2 className="animate-spin" />
+                </Space>
               ) : (
                 <motion.span
                   initial={{ opacity: 0 }}
@@ -103,10 +108,10 @@ export default function SignInSection() {
                   {isHovered ? "Let's go!" : "Sign In"}
                 </motion.span>
               )}
-            </motion.button>
+            </Button>
           </motion.div>
         </motion.div>
-      </FormProvider>
+      </Form>
     </motion.div>
   );
 }

@@ -2,8 +2,9 @@ import { FilterDef } from "@/components/common/filters";
 
 export interface GrfRow {
   id: string;
-  date: string; // ISO
+  date: string; 
   type: "goods" | "services";
+  status: "pending" | "approved" | "rejected";
   category: string;
   description: string;
   unit: string;
@@ -12,10 +13,11 @@ export interface GrfRow {
 }
 
 export const GRF_DATA: GrfRow[] = [
-  {
+ {
     id: "GRF-2025-001",
     date: "2025-05-15",
     type: "goods",
+    status: "pending",       
     category: "Capex",
     description: "Laptops (Dell Latitude 5440)",
     unit: "PCS",
@@ -26,6 +28,7 @@ export const GRF_DATA: GrfRow[] = [
     id: "GRF-2025-002",
     date: "2025-05-16",
     type: "services",
+    status: "approved",         
     category: "Consulting",
     description: "Audit engagement for FY-24",
     unit: "Job",
@@ -36,6 +39,7 @@ export const GRF_DATA: GrfRow[] = [
     id: "GRF-2025-003",
     date: "2025-05-17",
     type: "goods",
+    status: "rejected",        
     category: "Opex",
     description: "Printer toners",
     unit: "Box",
@@ -44,32 +48,13 @@ export const GRF_DATA: GrfRow[] = [
   },
 ];
 
-
-// filtersData.ts
-export const ACTIVITY_FILTERS: FilterDef[] = [
-  {
-    type: "select",
-    FieldProps: { name: "grf-status", placeholder: "GRF Status" },
-    options: [
-      { label: "Pending",  value: "pending"  },
-      { label: "Approved", value: "approved" },
-      { label: "Rejected", value: "rejected" },
-    ],
-  },
-  {
-    type: "select",
-    FieldProps: { name: "grf-type", placeholder: "GRF Type" },
-    options: [
-      { label: "Goods",    value: "goods"    },
-      { label: "Services", value: "services" },
-    ],
-  },
-  {
-    type: "date",
-    FieldProps: {
-      name: "grf-date",
-      asSingle: true,         
-    },
-  },
+ /* ——— Filter option lists ——— */
+export const statusOpts = [
+  { label: "Pending", value: "pending" },
+  { label: "Approved", value: "approved" },
+  { label: "Rejected", value: "rejected" },
 ];
-
+export const typeOpts = [
+  { label: "Goods", value: "goods" },
+  { label: "Services", value: "services" },
+];

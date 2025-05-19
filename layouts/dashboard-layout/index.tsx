@@ -1,21 +1,66 @@
-import React, { ReactNode } from "react";
+// DashboardLayout.tsx
+"use client";
+
+import React, { ReactNode, useState } from "react";
+import { Layout } from "antd";
 import Header from "./header";
 import Sidebar from "./sidebar";
 
-interface AuthLayoutProps {
+const { Header: AntHeader, Sider, Content } = Layout;
+
+interface DashboardLayoutProps {
   children: ReactNode;
 }
 
-const DashboardLayout = ({ children }: AuthLayoutProps) => {
-  return (
-    <div className="w-full">
-      <Header />
-      <div className="flex h-[calc(100vh-56px)] w-full">
-        <Sidebar />
-        <div className="w-full p-6">{children}</div>
-      </div>
-    </div>
-  );
-};
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const [collapsed, setCollapsed] = useState(false);
 
-export default DashboardLayout;
+  return (
+    <Layout style={{ minHeight: "100vh" }}>
+      {/* ── Fixed top header ───────────────────────────────────────── */}
+      <AntHeader
+        style={{
+          height: 56,
+          padding: 0,
+          lineHeight: "56px",
+          position: "fixed",
+          inset: 0,
+          zIndex: 100,
+        }}
+      >
+        <Header />
+      </AntHeader>
+
+      {/* ── Body (offset by header height) ─────────────────────────── */}
+      <Layout style={{ marginTop: 56 }}>
+        <Sider
+          width={240}
+          collapsedWidth={70}
+          theme="dark"
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          style={{ overflow: "auto" }}
+        >
+          <Sidebar
+            collapsed={collapsed}
+            onToggle={() => setCollapsed(!collapsed)}
+          />
+        </Sider>
+
+        {/* children area scrolls; header & sidebar stay fixed */}
+        <Content
+          style={{
+            height: "calc(100vh - 56px)",
+            overflowY: "auto",
+            padding: 24,
+            background: "#ffffff",
+            minHeight: 0,
+          }}
+        >
+          {children}
+        </Content>
+      </Layout>
+    </Layout>
+  );
+}

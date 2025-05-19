@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 const DUMMY_USER = {
-  email: "demo@sellora.com",
+  email: "seerat@gmail.com",
   password: "1234",
 };
 

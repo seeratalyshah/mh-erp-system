@@ -1,3 +1,4 @@
+@config "../tailwind.config.ts";
 @import "tailwindcss";
 
 :root {
@@ -24,3 +25,80 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Hide scrollbar until the element is hovered OR scrolling */
+.scrollbar-thin::-webkit-scrollbar {
+  opacity: 0;            /* Chrome/Edge/Safari */
+  transition: opacity .2s;
+}
+.scrollbar-thin:hover::-webkit-scrollbar,
+.scrollbar-thin:active::-webkit-scrollbar {
+  opacity: 1;
+}
+
+/* Firefox */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* =========================================================================
+   ⧉  Ant Design <Table> global look-&-feel
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* 1 ▸ wrap the whole table in a subtle border & rounded corners */
+.ant-table-wrapper {
+  border: 1px solid #e5e7eb !important;          /* ≈ Tailwind gray-200 */
+  border-radius: 6px !important;
+}
+
+/* 2 ▸ header row --------------------------------------------------------- */
+.ant-table thead > tr > th {
+  padding: 8px 12px !important;                 /* compact – but still tappable */
+  background: #f9fafb !important;                /* ≈ gray-50 */
+  font-weight: 600 !important;
+  color: #374151 !important;                     /* ≈ gray-700 */
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* 3 ▸ body cells --------------------------------------------------------- */
+.ant-table tbody > tr > td {
+  padding: 4px 12px !important;                  /* tighter than default 16px */
+  border-bottom: 1px solid #f3f4f6 !important;   /* ≈ gray-100 */
+}
+
+/* 4 ▸ striped rows for readability -------------------------------------- */
+.ant-table tbody > tr:nth-child(odd) > td {
+  background: #fcfcfd !important;                /* almost white */
+}
+
+/* 5 ▸ row hover highlight (uses your brand colour at 5 % opacity) -------- */
+.ant-table tbody > tr:hover > td {
+  background: rgba(4, 136, 166, 0.05) !important; /* #0488a6 @ 5 % */
+}
+
+/* 6 ▸ selection checkbox alignment -------------------------------------- */
+.ant-table-selection-column {
+  width: 48px !important; 
+  border-radius: 0 !important;                       /* consistent checkbox column width */
+}
+
+/* 7 ▸ remove double border when table is scrollable --------------------- */
+.ant-table-container table {
+  border: none !important;
+}
+
+/* 8 ▸ pagination (if you use it) ---------------------------------------- */
+.ant-pagination .ant-pagination-item-active a {
+  color: #0488a6 !important;
+}
+.ant-pagination .ant-pagination-item-active {
+  border-color: #0488a6 !important;
+}
+.ant-pagination .ant-pagination-item:hover {
+  border-color: #0488a6 !important;
+}
+
+/* =========================================================================
+   End Ant Design <Table> overrides
+   ========================================================================= */
+
