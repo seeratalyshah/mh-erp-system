@@ -42,7 +42,7 @@ export default function ProcurementFormsSection() {
         </Col>
         <Col span={24}>
           <h1 className="text-xl font-semibold pb-2 border-b border-gray-200">
-            Procurement Forms
+            Document Upload and Purchase Order Generation
           </h1>
         </Col>
         <Col xs={24} lg={10}>
@@ -111,7 +111,7 @@ export default function ProcurementFormsSection() {
                   icon={<FileAddOutlined />}
                   disabled={selectedForGen.length === 0 || !allDataValid}
                 >
-                  Generate Documents
+                  Generate Purchase Order
                 </Button>
               </Col>
               <Col>

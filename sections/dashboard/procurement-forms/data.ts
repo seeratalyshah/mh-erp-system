@@ -16,4 +16,5 @@ export const REQUIRED_DOCS: RequiredDoc[] = [
 export const GENERATABLE_DOCS = [
   { value: "po", label: "Purchase Order (PO)" },
   { value: "grn", label: "Goods Receipt Note (GRN)" },
+  { value: "grf", label: "Goods Request Form (GRF)" },
 ];

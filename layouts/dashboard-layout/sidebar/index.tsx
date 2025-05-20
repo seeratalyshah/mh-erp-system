@@ -9,6 +9,14 @@ import {
   FiFileText,
   FiBarChart2,
   FiDollarSign,
+  FiUsers,
+  FiClipboard,
+  FiShoppingCart,
+  FiSend,
+  FiPackage,
+  FiTrendingUp,
+  FiSettings,
+  FiUpload,
 } from "react-icons/fi";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,6 +28,38 @@ interface SidebarProps {
 
 const links = [
   { key: "/dashboard", label: "Dashboard", icon: <FiGrid size={18} /> },
+  { key: "/dashboard/vendors", label: "Vendors", icon: <FiUsers size={18} /> },
+  {
+    key: "/dashboard/grf-view",
+    label: "Requisitions",
+    icon: <FiClipboard size={18} />,
+  },
+  {
+    key: "/dashboard/upload-quotations",
+    label: "Upload Quotations",
+    icon: <FiUpload size={18} />,
+  },
+  {
+    key: "/dashboard/cost-analysis",
+    label: "Cost Analysis",
+    icon: <FiTrendingUp size={18} />,
+  },
+  { key: "/dashboard/RFQs", label: "RFQs", icon: <FiSend size={18} /> },
+  {
+    key: "/dashboard/purchase-orders",
+    label: "Purchase Orders",
+    icon: <FiShoppingCart size={18} />,
+  },
+  {
+    key: "/dashboard/goods-receipt-note",
+    label: "GRN",
+    icon: <FiPackage size={18} />,
+  },
+  {
+    key: "/dashboard/invoices",
+    label: "Invoices",
+    icon: <FiDollarSign size={18} />,
+  },
   {
     key: "/dashboard/procurement-forms",
     label: "Documents",
@@ -30,10 +70,11 @@ const links = [
     label: "Reports",
     icon: <FiBarChart2 size={18} />,
   },
-   {
-    key: "/dashboard/cost-analysis",
-    label: "Cost Analysis",
-    icon: <FiDollarSign size={18} />,
+
+  {
+    key: "/dashboard/settings",
+    label: "Settings",
+    icon: <FiSettings size={18} />,
   },
 ];
 

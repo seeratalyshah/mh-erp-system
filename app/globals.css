@@ -102,3 +102,11 @@ body {
    End Ant Design <Table> overrides
    ========================================================================= */
 
+/* highlight every cell in the flagged row */
+.ant-table tbody tr.lowest-row > td {
+  background-color: #d6c090 !important;   /* 🎨 pick any colour */
+}
+
+
+
+

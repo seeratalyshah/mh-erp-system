@@ -1,52 +1,27 @@
-// hooks/useGRFFormAnt.ts
-'use client';
+"use client";
 
-import { Form } from 'antd';
-import * as yup from 'yup';                // still handy for TS inference
-import { yupResolver } from '@hookform/resolvers/yup';
+import { Form } from "antd";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { schema, GRFFormValues } from "./grf-form-schema";
 
-/* ── Validation schema (keep / extend as needed) ──────────── */
-export const schema = yup.object({
-  typeOfRequest: yup.string().required(),
-  category:      yup.string().required(),
-  description:   yup.string().required(),
-  unit:          yup.string().required(),
-  quantity:      yup
-    .number()
-    .typeError('Quantity must be a number')
-    .positive()
-    .required(),
-  justification: yup.string().required(),
-  budgetHead:    yup.string().required(),
-  attachments:   yup.array().of(
-    yup.object({ file: yup.mixed<File>().required('Select a file') }),
-  ),
-});
-
-export type GRFFormValues = yup.InferType<typeof schema>;
-
-/* ── Default values ───────────────────────────────────────── */
-export const defaultValues: GRFFormValues = {
-  typeOfRequest: 'goods',
-  category: '',
-  description: '',
-  unit: '',
-  quantity: undefined as any,
-  justification: '',
-  budgetHead: '',
-  attachments: [],
-};
-
-/* ── Hook (returns Ant Design form instance) ───────────────── */
+/**
+ * Returns the Ant Design form instance plus a resolver you can
+ * plug into react-hook-form if you ever migrate back.  For now
+ * the resolver is optional – Ant Design’s own validation runs
+ * from the `rules` inside each Form.Item.
+ */
 export function useGRFForm() {
   const [form] = Form.useForm<GRFFormValues>();
 
-  /* optional – keep Yup for cross-field validation */
-  const resolver = yupResolver(schema);
-
   const onFinish = (values: GRFFormValues) => {
-    console.log('✅ Submitted GRF:', values);
+    console.log("✅ Submitted GRF →", values);
   };
+
+  /* keep for TS inference / potential future RHF bridge */
+  const resolver = yupResolver(schema);
 
   return { form, onFinish, resolver };
 }
+
+/* re-export defaults for component */
+export { defaultValues } from "./grf-form-schema";

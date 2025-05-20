@@ -1,46 +1,52 @@
 import * as Yup from "yup";
 
+/* ── Yup schema ─────────────────────────────────────────── */
 export const schema = Yup.object({
-  typeOfRequest: Yup.string().required(),
-  category: Yup.object({
-    value: Yup.string().required(),
-    label: Yup.string().required(),
-  })
-    .nullable()
-    .test("not-null", "Field is required", (v) => v !== null),
-  description: Yup.string().required("category Required"),
-  unit: Yup.object({
-    value: Yup.string().required(),
-    label: Yup.string().required(),
-  })
-    .nullable()
-    .test("not-null", "Field is required", (v) => v !== null),
-  quantity: Yup.string().required(),
-  justification: Yup.string().required("category Required"),
-  budgetHead: Yup.object({
-    value: Yup.string().required(),
-    label: Yup.string().required(),
-  })
-    .nullable()
-    .test("not-null", "Field is required", (v) => v !== null),
-  attachments: Yup.array()
+  typeOfRequest: Yup.string()
+    .oneOf(["goods", "services"])
+    .required("Select a type"),
+
+  /* dynamic rows ---------------------------------------------------- */
+  items: Yup.array()
     .of(
-      Yup.object().shape({
-        fileUpload: Yup.mixed().nullable(),
+      Yup.object({
+        category: Yup.string().required("Choose a category"),
+        description: Yup.string()
+          .max(500, "Max 500 characters")
+          .required("Enter a description"),
+        unit: Yup.string().required("Select a unit"),
+        quantity: Yup.number()
+          .typeError("Quantity must be a number")
+          .integer("Whole numbers only")
+          .positive("Must be greater than 0")
+          .required("Enter quantity"),
       })
     )
-    .required("Attachments are required"),
+    .min(1, "Add at least one item")
+    .required(),
+
+  justification: Yup.string().required("Enter justification"),
+
+  budgetHead: Yup.string().required("Choose a budget head"),
+
+  /* attachments optional – make required by adding .min(1) */
+  attachments: Yup.array().of(Yup.mixed()),
 });
 
-export type FormData = Yup.InferType<typeof schema>;
+/* ── Types & initial values ─────────────────────────────── */
+export type GRFFormValues = Yup.InferType<typeof schema>;
 
-export const defaultValues: FormData = {
-  typeOfRequest: "",
-  category: null,
-  description: "",
+export const defaultValues: GRFFormValues = {
+  typeOfRequest: "goods",
+  items: [
+    {
+      category: "",
+      description: "",
+      unit: "",
+      quantity: undefined as any,
+    },
+  ],
   justification: "",
-  unit: null,
-  quantity: "",
-  budgetHead: null,
+  budgetHead: "",
   attachments: [],
 };

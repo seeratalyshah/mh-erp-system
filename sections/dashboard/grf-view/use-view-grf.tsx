@@ -3,10 +3,11 @@
 
 import { useState, useMemo } from "react";
 import dayjs from "dayjs";
-import { GRF_DATA, GrfRow } from "./data";
+import { GRF_DATA } from "./data";
 import { Button, Space, Tag } from "antd";
 import { FiEdit, FiEye, FiTrash2 } from "react-icons/fi";
 import Link from "next/link";
+import { GrfRow } from "@/types/grf-rwo";
 
 /* ── filter state shape ── */
 export type FilterParams = {

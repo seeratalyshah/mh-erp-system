@@ -1,48 +1,49 @@
-// app/dashboard/cost-analysis/use-cost-analysis.ts
 "use client";
 
 import { useState, useMemo } from "react";
-import { QUOTATIONS, Quotation } from "./data";
 import type { MessageInstance } from "antd/es/message/interface";
+import { QUOTATIONS, Quotation } from "./data";
 
 export function useCostAnalysis(messageApi: MessageInstance) {
-  const [quotations, setQuotations] = useState<Quotation[]>(QUOTATIONS);
-  const [itemName, setItemName] = useState<string>("");
-  const [quantity, setQuantity] = useState<number | undefined>();
-  const [unitCost, setUnitCost] = useState<number | undefined>();
+  const [quotations] = useState<Quotation[]>(QUOTATIONS);
+
+  /* manual-entry state */
+  const [itemName, setItemName] = useState("");
+  const [quantity, setQuantity] = useState<number>();
+  const [unitCost, setUnitCost] = useState<number>();
+
   const [analysisResult, setAnalysisResult] = useState<{
     lowestVendor: string;
     averageQuote: number;
   } | null>(null);
 
-  const lowestQuote = useMemo(() => {
-    return quotations.reduce((min, q) =>
-      q.totalCost < min.totalCost ? q : min
-    );
-  }, [quotations]);
+  /* derived */
+  const lowestQuote = useMemo(
+    () => quotations.reduce((min, q) => (q.totalCost < min.totalCost ? q : min)),
+    [quotations]
+  );
 
-  const averageQuote = useMemo(() => {
-    return (
-      quotations.reduce((sum, q) => sum + q.totalCost, 0) / quotations.length
-    );
-  }, [quotations]);
+  const averageQuote = useMemo(
+    () => quotations.reduce((s, q) => s + q.totalCost, 0) / quotations.length,
+    [quotations]
+  );
 
+  /* handlers */
   const analyzeItemCosts = () => {
     if (!itemName || !quantity || !unitCost) {
-      messageApi.warning("Please enter item, quantity and unit cost");
+      messageApi.warning("Enter item, quantity & unit cost");
       return;
     }
-    messageApi.success("Cost analyzed");
-    setAnalysisResult({
-      lowestVendor: lowestQuote.vendor,
-      averageQuote,
-    });
+    // could push adjustments to quotations here if needed
+    setAnalysisResult({ lowestVendor: lowestQuote.vendor, averageQuote });
+    messageApi.success("Analysis complete");
   };
 
   return {
     quotations,
     lowestQuote,
     averageQuote,
+    /* manual entry */
     itemName,
     setItemName,
     quantity,

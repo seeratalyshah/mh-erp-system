@@ -1,4 +1,4 @@
-// app/dashboard/cost-analysis/page.tsx – now with ApexCharts
+// app/dashboard/cost-analysis/page.tsx
 "use client";
 
 import {
@@ -7,243 +7,144 @@ import {
   Col,
   Card,
   Table,
-  Button,
-  Input,
-  InputNumber,
-  Form,
   message,
 } from "antd";
-import {
-  FileExcelOutlined,
-  FilePdfOutlined,
-  CalculatorOutlined,
-} from "@ant-design/icons";
 import dynamic from "next/dynamic";
 import GoBack from "@/components/common/go-back";
 import { useCostAnalysis } from "./use-cost-analysis";
+import { ItemCostCard } from "./ItemCostCard";
+import { ExportButtons } from "./ExportButtons";
 
-/* ApexCharts requires dynamic import to avoid SSR issues */
+/* ApexCharts must be loaded client-side only */
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
 export default function CostAnalysisSection() {
-  const [messageApi, contextHolder] = message.useMessage();
-  const {
-    quotations,
-    lowestQuote,
-    itemName,
-    setItemName,
-    quantity,
-    setQuantity,
-    unitCost,
-    setUnitCost,
-    analysisResult,
-    analyzeItemCosts,
-  } = useCostAnalysis(messageApi);
+  const [msgApi, ctx] = message.useMessage();
+  const ca = useCostAnalysis(msgApi);
 
-  /* quotation comparison table */
+  /* —— table cols —— */
   const quoteCols = [
-    { title: "Vendor Name", dataIndex: "vendor", key: "vendor" },
+    { title: "Vendor", dataIndex: "vendor" },
     {
-      title: "Quotation Amount",
+      title: "Quotation",
       dataIndex: "quotationAmount",
-      key: "quotationAmount",
       render: (v: number) => `$${v.toLocaleString()}`,
     },
+    { title: "Delivery (days)", dataIndex: "deliveryTime" },
     {
-      title: "Delivery Time",
-      dataIndex: "deliveryTime",
-      key: "deliveryTime",
-      render: (d: number) => `${d} days`,
-    },
-    {
-      title: "Additional Costs",
+      title: "Additional",
       dataIndex: "additionalCosts",
-      key: "additionalCosts",
       render: (v: number) => `$${v.toLocaleString()}`,
     },
     {
-      title: "Total Cost",
+      title: "Total",
       dataIndex: "totalCost",
-      key: "totalCost",
       render: (v: number) => `$${v.toLocaleString()}`,
     },
   ];
 
-  /* —— Apex chart config —— */
+  /* —— Apex options —— */
   const chartOptions = {
     chart: { type: "bar", toolbar: { show: false } },
-    xaxis: {
-      categories: quotations.map((q) => q.vendor),
-      labels: { style: { fontSize: "12px" } },
-    },
-    colors: quotations.map((q) =>
-      q.vendor === lowestQuote.vendor ? "#52c41a" : "#1890ff"
+    xaxis: { categories: ca.quotations.map((q) => q.vendor) },
+    colors: ca.quotations.map((q) =>
+      q.vendor === ca.lowestQuote.vendor ? "#52c41a" : "#1890ff"
     ),
-    plotOptions: {
-      bar: { distributed: true, columnWidth: "55%" },
-    },
+    plotOptions: { bar: { distributed: true, columnWidth: "55%" } },
     dataLabels: { enabled: false },
-    tooltip: {
-      y: {
-        formatter: (val: number) => `$${val.toLocaleString()}`,
-      },
-    },
+    tooltip: { y: { formatter: (v: number) => `$${v.toLocaleString()}` } },
   } as const;
+
   const chartSeries = [
-    {
-      name: "Total Cost",
-      data: quotations.map((q) => q.totalCost),
-    },
+    { name: "Total Cost", data: ca.quotations.map((q) => q.totalCost) },
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
-      {contextHolder}
+    <div className="mx-auto max-w-7xl space-y-8">
+      {ctx}
+
+      {/* ——— header & table ——— */}
       <Row gutter={[0, 24]}>
         <Col>
           <GoBack link="/dashboard" />
         </Col>
+
         <Col span={24}>
-          <h1 className="text-xl font-semibold pb-2 border-b border-gray-200">
+          <Typography.Title level={4} className="!mb-2">
             Cost Analysis
-          </h1>
+          </Typography.Title>
         </Col>
 
-        {/* Quotation table */}
         <Col span={24}>
-          <Card title="Quotation Comparison" extra={<ExportButtons />}>
+          <Card
+            title="Quotation Comparison"
+            extra={
+              <ExportButtons
+                rows={ca.quotations}
+                avg={ca.averageQuote}
+                lowest={ca.lowestQuote.vendor}
+              />
+            }
+          >
             <Table
               size="small"
               pagination={false}
-              dataSource={quotations.map((q) => ({ ...q, key: q.vendor }))}
+              rowKey="vendor"
+              dataSource={ca.quotations}
               columns={quoteCols}
               rowClassName={(row) =>
-                row.vendor === lowestQuote.vendor ? "bg-green-50" : ""
+                row.vendor === ca.lowestQuote.vendor ? "lowest-row" : ""
               }
             />
           </Card>
         </Col>
       </Row>
 
-      <Row gutter={[24, 24]}>
-        {/* Item cost analysis */}
-        <Col xs={24} lg={12}>
-          <ItemCostCard
-            itemName={itemName}
-            setItemName={setItemName}
-            quantity={quantity}
-            setQuantity={setQuantity}
-            unitCost={unitCost}
-            setUnitCost={setUnitCost}
-            onAnalyze={analyzeItemCosts}
-          />
-        </Col>
+      {/* ——— form & (conditional) chart ——— */}
+      {!ca.analysisResult ? (
+        /* BEFORE analyse → full-width form */
+        <Row>
+          <Col span={24}>
+            <ItemCostCard {...ca} />
+          </Col>
+        </Row>
+      ) : (
+        /* AFTER analyse → split 50/50 */
+        <Row gutter={[24, 24]}>
+          <Col xs={24} lg={12}>
+            <ItemCostCard {...ca} />
+          </Col>
 
-        {/* Apex chart */}
-        <Col xs={24} lg={12}>
-          <Card title="Cost Comparison Chart">
-            <ReactApexChart
-              options={chartOptions as any}
-              series={chartSeries}
-              type="bar"
-              height={300}
-            />
-          </Card>
-        </Col>
-      </Row>
+          <Col xs={24} lg={12}>
+            <Card title="Cost Comparison Chart">
+              <ReactApexChart
+                options={chartOptions as any}
+                series={chartSeries}
+                type="bar"
+                height={300}
+              />
+            </Card>
+          </Col>
+        </Row>
+      )}
 
-      {analysisResult && (
+      {/* ——— summary card (also conditional) ——— */}
+      {ca.analysisResult && (
         <Card>
           <Typography.Paragraph>
-            <strong>Lowest Quote:</strong> {analysisResult.lowestVendor}
+            <strong>Lowest Quote:</strong> {ca.analysisResult.lowestVendor}
           </Typography.Paragraph>
           <Typography.Paragraph>
-            <strong>Average Quote:</strong> $
-            {analysisResult.averageQuote.toLocaleString()}
+            <strong>Average Quote:</strong>{" "}
+            {ca.analysisResult.averageQuote.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })}
           </Typography.Paragraph>
         </Card>
       )}
     </div>
-  );
-}
-
-/* --------------------- helper components --------------------- */
-function ExportButtons() {
-  return (
-    <Row gutter={8}>
-      <Col>
-        <Button type="primary" icon={<FileExcelOutlined />}>
-          Export Excel
-        </Button>
-      </Col>
-      <Col>
-        <Button type="primary" icon={<FilePdfOutlined />}>
-          Export PDF
-        </Button>
-      </Col>
-    </Row>
-  );
-}
-
-function ItemCostCard({
-  itemName,
-  setItemName,
-  quantity,
-  setQuantity,
-  unitCost,
-  setUnitCost,
-  onAnalyze,
-}: {
-  itemName: string;
-  setItemName: (v: string) => void;
-  quantity: number | undefined;
-  setQuantity: (v: number | undefined) => void;
-  unitCost: number | undefined;
-  setUnitCost: (v: number | undefined) => void;
-  onAnalyze: () => void;
-}) {
-  return (
-    <Card title="Item Cost Analysis">
-      <Form layout="vertical" onFinish={onAnalyze}>
-        <Form.Item label="Item Name" required>
-          <Input
-            value={itemName}
-            onChange={(e) => setItemName(e.target.value)}
-          />
-        </Form.Item>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item label="Quantity" required>
-              <InputNumber
-                min={1}
-                style={{ width: "100%" }}
-                value={quantity}
-                onChange={(val) => setQuantity(val ?? undefined)}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="Unit Cost (USD)" required>
-              <InputNumber
-                min={0}
-                style={{ width: "100%" }}
-                value={unitCost}
-                onChange={(val) => setUnitCost(val ?? undefined)}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Button
-          type="primary"
-          icon={<CalculatorOutlined />}
-          htmlType="submit"
-          block
-        >
-          Analyze Costs
-        </Button>
-      </Form>
-    </Card>
   );
 }

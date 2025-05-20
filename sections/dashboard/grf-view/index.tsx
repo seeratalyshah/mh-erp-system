@@ -1,10 +1,12 @@
 // GrfViewSection/index.tsx
 "use client";
 
-import { Table, Form, Select, DatePicker, Space, Row, Col } from "antd";
+import { Table, Form, Select, DatePicker, Space, Row, Col, Button } from "antd";
 import { useViewGrf } from "./use-view-grf";
 import { statusOpts, typeOpts } from "./data";
 import GoBack from "@/components/common/go-back";
+import Link from "next/link";
+import { FiClipboard } from "react-icons/fi";
 
 export default function GrfViewSection() {
   const { data, params, updateParams, columns } = useViewGrf();
@@ -17,8 +19,18 @@ export default function GrfViewSection() {
         </Col>
         <Col span={24}>
           <h1 className="text-xl font-semibold pb-2 border-b border-gray-200">
-            Submitted GRF List
+            Requisitions
           </h1>
+        </Col>
+        <Col span={24}>
+          <div className="flex justify-end">
+            <Link href={"/dashboard/new-grf"}>
+              <Button type="primary">
+                <FiClipboard size={18} />
+                Create New GRF
+              </Button>
+            </Link>
+          </div>
         </Col>
         <Col span={24}>
           <Form layout="vertical">
