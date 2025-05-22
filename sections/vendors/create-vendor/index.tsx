@@ -36,7 +36,7 @@ export default function CreateVendorModal({
       open={open}
       onCancel={hide}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form layout="vertical" form={form} onFinish={handleSubmit} preserve={false}>
         <Row gutter={16}>

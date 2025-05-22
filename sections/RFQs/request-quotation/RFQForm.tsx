@@ -79,7 +79,7 @@ export default function RFQForm({
       open={open}
       onCancel={onCancel}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
       width={700}
     >
       <Form

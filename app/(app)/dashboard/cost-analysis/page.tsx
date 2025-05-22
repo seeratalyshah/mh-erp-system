@@ -1,4 +1,4 @@
-import CostAnalysisSection from "@/sections/dashboard/cost-analysis";
+import CostAnalysisSection from "@/sections/cost-analysis";
 import React from "react";
 
 const CostAnalysis = () => {

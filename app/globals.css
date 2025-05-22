@@ -107,6 +107,19 @@ body {
   background-color: #d6c090 !important;   /* 🎨 pick any colour */
 }
 
+#nprogress {
+  pointer-events: none;
+}
+#nprogress .bar {
+  background: #ed8804;
+  position: fixed;
+  z-index: 1031;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+}
+
 
 
 

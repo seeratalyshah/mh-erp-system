@@ -30,7 +30,7 @@ const links = [
   { key: "/dashboard", label: "Dashboard", icon: <FiGrid size={18} /> },
   { key: "/dashboard/vendors", label: "Vendors", icon: <FiUsers size={18} /> },
   {
-    key: "/dashboard/grf-view",
+    key: "/dashboard/requisitions",
     label: "Requisitions",
     icon: <FiClipboard size={18} />,
   },
@@ -51,7 +51,7 @@ const links = [
     icon: <FiShoppingCart size={18} />,
   },
   {
-    key: "/dashboard/goods-receipt-note",
+    key: "/dashboard/grn",
     label: "GRN",
     icon: <FiPackage size={18} />,
   },
@@ -61,7 +61,7 @@ const links = [
     icon: <FiDollarSign size={18} />,
   },
   {
-    key: "/dashboard/procurement-forms",
+    key: "/dashboard/documents",
     label: "Documents",
     icon: <FiFileText size={18} />,
   },

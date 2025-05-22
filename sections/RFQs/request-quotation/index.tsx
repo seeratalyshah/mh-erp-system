@@ -16,7 +16,7 @@ export default function RequestQuotationSection() {
       <div className="mx-auto max-w-7xl">
         <Row gutter={[0, 24]}>
           <Col>
-            <GoBack link="/dashboard" />
+            <GoBack link="/dashboard/RFQs" />
           </Col>
 
           <Col span={24}>

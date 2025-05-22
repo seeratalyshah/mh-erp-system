@@ -1,9 +1,8 @@
-import React from 'react'
+import DocumentsSection from "@/sections/documents";
+import React from "react";
 
 const Documents = () => {
-  return (
-    <div>Documents</div>
-  )
-}
+  return <DocumentsSection />;
+};
 
-export default Documents
+export default Documents;

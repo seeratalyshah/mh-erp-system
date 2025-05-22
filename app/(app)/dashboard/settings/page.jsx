@@ -1,4 +1,4 @@
-import SettingsSection from "@/sections/dashboard/settings";
+import SettingsSection from "@/sections/settings";
 
 const Settings = () => {
   return <SettingsSection />;

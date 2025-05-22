@@ -1,4 +1,4 @@
-import ReportsSection from "@/sections/dashboard/reports";
+import ReportsSection from "@/sections/reports";
 import React from "react";
 
 const Reports = () => {

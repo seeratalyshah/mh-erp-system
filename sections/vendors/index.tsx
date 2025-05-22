@@ -15,9 +15,6 @@ export default function VendorsSection() {
   return (
     <div className="mx-auto max-w-7xl">
       <Row justify="space-between" align="middle" gutter={[16, 24]}>
-        <Col>
-          <GoBack link="/dashboard" />
-        </Col>
         <Col span={24}>
           <h1 className="text-xl font-semibold pb-2 border-b border-gray-200">
             Vendors Management
