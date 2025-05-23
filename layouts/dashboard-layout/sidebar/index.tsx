@@ -28,12 +28,12 @@ interface SidebarProps {
 
 const links = [
   { key: "/dashboard", label: "Dashboard", icon: <FiGrid size={18} /> },
-  { key: "/dashboard/vendors", label: "Vendors", icon: <FiUsers size={18} /> },
   {
     key: "/dashboard/requisitions",
     label: "Requisitions",
     icon: <FiClipboard size={18} />,
   },
+  { key: "/dashboard/RFQs", label: "RFQs", icon: <FiSend size={18} /> },
   {
     key: "/dashboard/upload-quotations",
     label: "Upload Quotations",
@@ -44,22 +44,22 @@ const links = [
     label: "Cost Analysis",
     icon: <FiTrendingUp size={18} />,
   },
-  { key: "/dashboard/RFQs", label: "RFQs", icon: <FiSend size={18} /> },
   {
     key: "/dashboard/purchase-orders",
     label: "Purchase Orders",
     icon: <FiShoppingCart size={18} />,
   },
   {
-    key: "/dashboard/grn",
-    label: "GRN",
-    icon: <FiPackage size={18} />,
-  },
-  {
     key: "/dashboard/invoices",
     label: "Invoices",
     icon: <FiDollarSign size={18} />,
   },
+  {
+    key: "/dashboard/grn",
+    label: "GRN",
+    icon: <FiPackage size={18} />,
+  },
+  { key: "/dashboard/vendors", label: "Vendors", icon: <FiUsers size={18} /> },
   {
     key: "/dashboard/documents",
     label: "Documents",
@@ -70,7 +70,6 @@ const links = [
     label: "Reports",
     icon: <FiBarChart2 size={18} />,
   },
-
   {
     key: "/dashboard/settings",
     label: "Settings",

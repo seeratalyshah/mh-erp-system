@@ -1,4 +1,3 @@
-// app/dashboard/cost-analysis/page.tsx
 "use client";
 
 import {
@@ -7,15 +6,16 @@ import {
   Col,
   Card,
   Table,
+  Select,
+  InputNumber,
   message,
 } from "antd";
 import dynamic from "next/dynamic";
 import GoBack from "@/components/common/go-back";
 import { useCostAnalysis } from "./use-cost-analysis";
-import { ItemCostCard } from "./ItemCostCard";
 import { ExportButtons } from "./ExportButtons";
 
-/* ApexCharts must be loaded client-side only */
+/* ApexCharts client-side */
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
@@ -24,49 +24,77 @@ export default function CostAnalysisSection() {
   const [msgApi, ctx] = message.useMessage();
   const ca = useCostAnalysis(msgApi);
 
-  /* —— table cols —— */
+  /* ── quotation table cols ── */
   const quoteCols = [
     { title: "Vendor", dataIndex: "vendor" },
     {
-      title: "Quotation",
-      dataIndex: "quotationAmount",
-      render: (v: number) => `$${v.toLocaleString()}`,
-    },
-    { title: "Delivery (days)", dataIndex: "deliveryTime" },
-    {
-      title: "Additional",
-      dataIndex: "additionalCosts",
-      render: (v: number) => `$${v.toLocaleString()}`,
-    },
-    {
-      title: "Total",
+      title: "Total Cost",
       dataIndex: "totalCost",
       render: (v: number) => `$${v.toLocaleString()}`,
     },
+    {
+      title: "Delivery",
+      dataIndex: "deliveryTime",
+      render: (v: number) => `${v} d`,
+    },
+    {
+      title: "Additional",
+      dataIndex: "additionalCosts",
+      render: (v: number) => `$${v}`,
+    },
   ];
 
-  /* —— Apex options —— */
+  /* ── items table (internal unit cost entry) ── */
+  const itemCols = [
+    { title: "Item", dataIndex: "name" },
+    { title: "Qty", dataIndex: "quantity" },
+    {
+      title: "Unit Cost (USD)",
+      dataIndex: "name",
+      render: (name: string) => (
+        <InputNumber
+          min={0}
+          value={ca.unitCostMap[name]}
+          onChange={(v) => ca.setUnitCost(name, v)}
+        />
+      ),
+    },
+    {
+      title: "Line Total",
+      dataIndex: "name",
+      render: (name: string, row: any) =>
+        `$${(row.quantity * (ca.unitCostMap[name] ?? 0)).toLocaleString()}`,
+    },
+  ];
+
+  /* ── chart: vendors + internal baseline ── */
+  const chartCategories = [...ca.grfQuotes.map((q) => q.vendor), "Internal"];
+  const chartData = [...ca.grfQuotes.map((q) => q.totalCost), ca.internalTotal];
+  const chartColors = [
+    ...ca.grfQuotes.map((q) =>
+      q.totalCost === ca.lowestQuote.totalCost ? "#52c41a" : "#1890ff"
+    ),
+    "#999999",
+  ];
+
   const chartOptions = {
     chart: { type: "bar", toolbar: { show: false } },
-    xaxis: { categories: ca.quotations.map((q) => q.vendor) },
-    colors: ca.quotations.map((q) =>
-      q.vendor === ca.lowestQuote.vendor ? "#52c41a" : "#1890ff"
-    ),
+    xaxis: { categories: chartCategories },
+    colors: chartColors,
     plotOptions: { bar: { distributed: true, columnWidth: "55%" } },
     dataLabels: { enabled: false },
     tooltip: { y: { formatter: (v: number) => `$${v.toLocaleString()}` } },
   } as const;
 
-  const chartSeries = [
-    { name: "Total Cost", data: ca.quotations.map((q) => q.totalCost) },
-  ];
-
   return (
     <div className="mx-auto max-w-7xl space-y-8">
       {ctx}
 
-      {/* ——— header & table ——— */}
-      <Row gutter={[0, 24]}>
+      {/* Header + GRF dropdown */}
+      <Row gutter={[24, 24]}>
+        <Col span={24}>
+          <GoBack link="/dashboard" />
+        </Col>
 
         <Col span={24}>
           <Typography.Title level={4} className="!mb-2">
@@ -75,11 +103,21 @@ export default function CostAnalysisSection() {
         </Col>
 
         <Col span={24}>
+          <Select
+            allowClear
+            placeholder="Select GRF"
+            style={{ width: 240 }}
+            options={ca.availableGrfs.map((g) => ({ label: g, value: g }))}
+            value={ca.grf}
+            onChange={(v) => ca.setGrf(v || undefined)}
+          />
+        </Col>
+        <Col span={24}>
           <Card
-            title="Quotation Comparison"
+            title="Vendor Quotation Totals"
             extra={
               <ExportButtons
-                rows={ca.quotations}
+                rows={ca.grfQuotes}
                 avg={ca.averageQuote}
                 lowest={ca.lowestQuote.vendor}
               />
@@ -89,59 +127,48 @@ export default function CostAnalysisSection() {
               size="small"
               pagination={false}
               rowKey="vendor"
-              dataSource={ca.quotations}
+              dataSource={ca.grfQuotes}
               columns={quoteCols}
-              rowClassName={(row) =>
-                row.vendor === ca.lowestQuote.vendor ? "lowest-row" : ""
+              rowClassName={(r) =>
+                r.totalCost === ca.lowestQuote.totalCost ? "lowest-row" : ""
               }
             />
           </Card>
         </Col>
+        {ca.grf && (
+          <>
+            <Col span={12}>
+              <Card title={`Internal Cost Benchmark — ${ca.grf}`}>
+                <Table
+                  rowKey="name"
+                  columns={itemCols}
+                  dataSource={ca.grfItems}
+                  size="small"
+                  pagination={false}
+                  bordered
+                />
+                <Typography.Paragraph className="text-right mt-2">
+                  <strong>Internal Total: </strong>
+                  {ca.internalTotal.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })}
+                </Typography.Paragraph>
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card title="Cost Comparison Chart">
+                <ReactApexChart
+                  options={chartOptions as any}
+                  series={[{ name: "Total", data: chartData }]}
+                  type="bar"
+                  height={300}
+                />
+              </Card>
+            </Col>
+          </>
+        )}
       </Row>
-
-      {/* ——— form & (conditional) chart ——— */}
-      {!ca.analysisResult ? (
-        /* BEFORE analyse → full-width form */
-        <Row>
-          <Col span={24}>
-            <ItemCostCard {...ca} />
-          </Col>
-        </Row>
-      ) : (
-        /* AFTER analyse → split 50/50 */
-        <Row gutter={[24, 24]}>
-          <Col xs={24} lg={12}>
-            <ItemCostCard {...ca} />
-          </Col>
-
-          <Col xs={24} lg={12}>
-            <Card title="Cost Comparison Chart">
-              <ReactApexChart
-                options={chartOptions as any}
-                series={chartSeries}
-                type="bar"
-                height={300}
-              />
-            </Card>
-          </Col>
-        </Row>
-      )}
-
-      {/* ——— summary card (also conditional) ——— */}
-      {ca.analysisResult && (
-        <Card>
-          <Typography.Paragraph>
-            <strong>Lowest Quote:</strong> {ca.analysisResult.lowestVendor}
-          </Typography.Paragraph>
-          <Typography.Paragraph>
-            <strong>Average Quote:</strong>{" "}
-            {ca.analysisResult.averageQuote.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            })}
-          </Typography.Paragraph>
-        </Card>
-      )}
     </div>
   );
 }
