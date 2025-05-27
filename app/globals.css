@@ -26,49 +26,81 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Hide scrollbar until the element is hovered OR scrolling */
-.scrollbar-thin::-webkit-scrollbar {
-  opacity: 0;            /* Chrome/Edge/Safari */
-  transition: opacity .2s;
+/* ───────────────────────────────────────────────────────────────
+   Utility 1 ▸ .scrollbar-hide  – element scrolls, track/thumb gone
+   ───────────────────────────────────────────────────────────── */
+.scrollbar-hide {
+  /* Firefox               */
+  scrollbar-width: none;
+  /* IE / old Edge         */
+  -ms-overflow-style: none;
 }
-.scrollbar-thin:hover::-webkit-scrollbar,
-.scrollbar-thin:active::-webkit-scrollbar {
-  opacity: 1;
+.scrollbar-hide::-webkit-scrollbar {
+  /* Chrome / Safari / Opera */
+  display: none;
 }
 
-/* Firefox */
+/* ───────────────────────────────────────────────────────────────
+   Utility 2 ▸ .scrollbar-thin – invisible until user interacts,
+   then shows a 6 px thumb in your brand colour
+   ───────────────────────────────────────────────────────────── */
 .scrollbar-thin {
-  scrollbar-width: thin;
+  --brand-scrollbar: #0488a6; /* customise if you like */
+  overflow: auto; /* enable scrolling */
+  scrollbar-gutter: stable;
+  scrollbar-width: thin; /* Firefox: keeps layout */
+  scrollbar-color: transparent transparent;
+}
+.scrollbar-thin:is(:hover, :focus, :active) {
+  scrollbar-color: var(--brand-scrollbar) transparent;
 }
 
-/* =========================================================================
-   ⧉  Ant Design <Table> global look-&-feel
-   ───────────────────────────────────────────────────────────────────────── */
+/* Chrome / Safari / Edge ------------------------------------- */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+  transition: width 0.2s ease, height 0.2s ease;
+}
+.scrollbar-thin:is(:hover, :focus, :active)::-webkit-scrollbar {
+  width: 6px; /* thin vertical */
+  height: 6px; /* thin horizontal */
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--brand-scrollbar);
+  border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:active {
+  background: color-mix(in srgb, var(--brand-scrollbar) 80%, #000 20%);
+}
 
 /* 1 ▸ wrap the whole table in a subtle border & rounded corners */
 .ant-table-wrapper {
-  border: 1px solid #e5e7eb !important;          /* ≈ Tailwind gray-200 */
+  border: 1px solid #e5e7eb !important; /* ≈ Tailwind gray-200 */
   border-radius: 6px !important;
 }
 
 /* 2 ▸ header row --------------------------------------------------------- */
 .ant-table thead > tr > th {
-  padding: 8px 12px !important;                 /* compact – but still tappable */
-  background: #f9fafb !important;                /* ≈ gray-50 */
+  padding: 8px 12px !important; /* compact – but still tappable */
+  background: #f9fafb !important; /* ≈ gray-50 */
   font-weight: 600 !important;
-  color: #374151 !important;                     /* ≈ gray-700 */
+  color: #374151 !important; /* ≈ gray-700 */
   border-bottom: 1px solid #e5e7eb !important;
 }
 
 /* 3 ▸ body cells --------------------------------------------------------- */
 .ant-table tbody > tr > td {
-  padding: 4px 12px !important;                  /* tighter than default 16px */
-  border-bottom: 1px solid #f3f4f6 !important;   /* ≈ gray-100 */
+  padding: 4px 12px !important; /* tighter than default 16px */
+  border-bottom: 1px solid #f3f4f6 !important; /* ≈ gray-100 */
 }
 
 /* 4 ▸ striped rows for readability -------------------------------------- */
 .ant-table tbody > tr:nth-child(odd) > td {
-  background: #fcfcfd !important;                /* almost white */
+  background: #fcfcfd !important; /* almost white */
 }
 
 /* 5 ▸ row hover highlight (uses your brand colour at 5 % opacity) -------- */
@@ -78,8 +110,8 @@ body {
 
 /* 6 ▸ selection checkbox alignment -------------------------------------- */
 .ant-table-selection-column {
-  width: 48px !important; 
-  border-radius: 0 !important;                       /* consistent checkbox column width */
+  width: 48px !important;
+  border-radius: 0 !important; /* consistent checkbox column width */
 }
 
 /* 7 ▸ remove double border when table is scrollable --------------------- */
@@ -104,14 +136,14 @@ body {
 
 /* highlight every cell in the flagged row */
 .ant-table tbody tr.lowest-row > td {
-  background-color: #d6c090 !important;   /* 🎨 pick any colour */
+  background-color: #d6c090 !important; /* 🎨 pick any colour */
 }
 
 #nprogress {
   pointer-events: none;
 }
 #nprogress .bar {
-  background: #ed8804;
+  background: #8edeef;
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -119,7 +151,3 @@ body {
   width: 100%;
   height: 4px;
 }
-
-
-
-

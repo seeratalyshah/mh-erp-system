@@ -26,7 +26,7 @@ export const QUOTATIONS: Quotation[] = [
   },
   {
     grf: "GRF-2025-004",
-    vendor: "XYZ Corporation",
+    vendor: "EFG Corporation",
     quotationAmount: 13_200,
     deliveryTime: 10,
     additionalCosts: 800,
@@ -55,5 +55,5 @@ export const GRF_ITEMS: GrfItem[] = [
   { grf: "GRF-2025-004", name: "Laptop",  quantity: 10 },
   { grf: "GRF-2025-004", name: "Mouse",   quantity: 10 },
   { grf: "GRF-2025-005", name: "Printer", quantity:  2 },
-  { grf: "GRF-2025-005", name: "Toner",   quantity:  8 },
+  { grf: "GRF-2025-006", name: "Toner",   quantity:  8 },
 ];

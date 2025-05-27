@@ -1,6 +1,5 @@
 // tailwind.config.ts
-import type { Config } from 'tailwindcss'
-import scrollbar from 'tailwind-scrollbar'
+import type { Config } from "tailwindcss";
 
 export default {
   /*
@@ -15,7 +14,7 @@ export default {
     extend: {
       colors: {
         /* Your brand colour */
-        primary: '#0488a6',        // bg-primary, text-primary, etc.
+        primary: "#0488a6", // bg-primary, text-primary, etc.
         // ── optional tints/shades ──
         // primary: {
         //   DEFAULT : '#0488a6',
@@ -33,6 +32,4 @@ export default {
       },
     },
   },
-
-  plugins: [scrollbar({ nocompatible: true }),],
-} satisfies Config
+} satisfies Config;
